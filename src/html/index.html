@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="stylesheet"
+      href="https://use.fontawesome.com/releases/v5.8.1/css/all.css"
+      integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf"
+      crossorigin="anonymous"
+    />
+    <link rel="stylesheet" href="./assets/css/main.css" />
+    <title>Bsucador de series de Anime</title>
+  </head>
+  <body>
+    <header>
+      <h1>Buscador de series de Anime</h1>
+    </header>
+    <main>
+      <form action="#">
+        <!-- RECORDAR RELLENAR EL ACTION -->
+        <label for="input">Escribe aquí el nombre de la serie que buscas</label>
+        <input
+          class="js-input"
+          id="input"
+          type="text"
+          placeholder="Ej. Naruto"
+        />
+        <input class="js-search-btn" type="submit" value="Buscar" />
+        <button class="js-reset-btn">Reset</button>
+      </form>
+      <div class="anime">
+        <section class="anime__favorites js-favorites-section hidden">
+          <h2>Series favoritas</h2>
+          <ul class="js-favorites-list"></ul>
+          <button>Borrar favoritos</button>
+        </section>
+        <section class="anime__results js-result-section hidden">
+          <h2>Resultados</h2>
+          <ul class="js-result-list"></ul>
+        </section>
+      </div>
+    </main>
+    <footer>
+      <small>&copy; Sara Palomo Campesino</small>
+    </footer>
+    <script type="text/javascript" src="./assets/js/main.js"></script>
+  </body>
+</html>

@@ -1,0 +1,25 @@
+.anime {
+  display: flex;
+  &__favorites {
+    background-color: aqua;
+    margin-right: 50px;
+  }
+  &__results {
+    background-color: aqua;
+  }
+}
+
+.hidden {
+  display: none;
+}
+
+.favorite {
+  background-color: blue;
+  color: white;
+}
+
+.fa-times-circle {
+  color: blue;
+  width: 20px;
+  height: 20px;
+}
