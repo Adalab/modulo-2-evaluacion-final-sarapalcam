@@ -1,34 +1,48 @@
 "use strict";
 
 //Cosas que faltan por hacer:
-///////Separar más las funciones, cambiar for of por fins siempre que sea posible
-///////LocalStorage de las series favoritas, que también aparezcan marcadas en la lista de resultados si aparecen en la búsqueda -> También tendrán que eliminarse del localStorage cuando las eliminemos de la lista
-///////Que las series favoritas sigan marcadas como tal en resultados (esto creo que es con el local storage)
+///////En general está todo bastante poco elegante, si sobre tiempo intentar mejorar el código, creo que la clave es crear un objetos para cada serie favorita y meter eso en el array. Separar funciones, evitar "for", renombrar elementos, evitar guardar HTML en local storage
+///////Includes en HTML, CSS y JS
 ///////CSS
 ///////Extras si me da tiempo: modo noche, versión responsive (que en el móvil los favoritos estén ocultos y los podamos desplegar abriendo un menú)
 
 ///////////////////////////////////////////////Traemos los elementos que necesitamos de HTML
-
 const input = document.querySelector(".js-input");
 const searchBtn = document.querySelector(".js-search-btn");
 const resetBtn = document.querySelector(".js-reset-btn");
-const favSection = document.querySelector(".js-favorites-section");
-const resultSection = document.querySelector(".js-result-section");
 const favList = document.querySelector(".js-favorites-list");
 const resetFavoritesBtn = document.querySelector(".js-reset-favorites-btn");
 const resultList = document.querySelector(".js-result-list");
 
 /////////////////////////////////////////////////Creamos nuestas constantes globales
 let favorites = [];
-let numbers = [1, 35, 46, 23, 57];
+
 ///////////////////////////////////////////////Funciones
 
-//Pinta las portadas y títulos en la lista de resultados a través de DOM avanzado
+//Pinta los elementos marcados como favoritos en resultados y guardados en el localstorage
+function renderFavoriteHighliht(allLiEl) {
+  let results = [];
+  for (const item of allLiEl) {
+    results.push(item.id);
+  }
+  console.log(results);
+  for (const favorite of favorites) {
+    const findFavorite = results.find((row) => row === favorite);
+    console.log(findFavorite);
+    for (const liItem of allLiEl) {
+      if (findFavorite === liItem.id) {
+        liItem.classList.add("favorite");
+      }
+    }
+  }
+}
+
 function renderResults(animeData) {
   resultList.innerHTML = "";
   for (const data of animeData) {
     const newLiEl = document.createElement("li");
     newLiEl.id = `${data.mal_id}`;
+    newLiEl.classList.add("js-li-results");
     const newImgEl = document.createElement("img");
     const newParagraphEl = document.createElement("p");
     if (data.image_url === null || data.image_url === undefined) {
@@ -39,16 +53,17 @@ function renderResults(animeData) {
     }
     newImgEl.style = "height: 317px; width: 225px; background-size: cover";
     newImgEl.alt = `Imagen de portada de ${data.title}`;
-    newImgEl.title = `Imagen de portada de ${data.title}`;
+    newImgEl.title = `Imagen de portada de ${data.title}`; //TENGO QUE PONER ESTOS ELEMENTOS DE LAS IMÁGENES EN FAVORITOS
     const newParagraphContent = document.createTextNode(`${data.title}`);
     newParagraphEl.appendChild(newParagraphContent);
     newLiEl.appendChild(newImgEl);
     newLiEl.appendChild(newParagraphEl);
     resultList.appendChild(newLiEl);
-    //results.push(newLiEl);
     //Evento para añadir a favoritos una serie
     newLiEl.addEventListener("click", handleClickResultList);
   }
+  const allLiEl = document.querySelectorAll(".js-li-results");
+  renderFavoriteHighliht(allLiEl);
 }
 
 //Toma el valor que la usuaria introduce en la barra de búsqueda
@@ -68,12 +83,12 @@ function fetchResults() {
 
 //Muestra la sección de resultados
 function showResults() {
-  resultSection.classList.remove("hidden");
+  resultList.classList.remove("hidden");
 }
 
 //Muestra la sección de favoritos
 function showFavorites() {
-  favSection.classList.remove("hidden");
+  favList.classList.remove("hidden");
 }
 
 //Señala las series marcadas o desmarcadas como favoritas
@@ -99,36 +114,47 @@ function renderFavorite(ev) {
 //Añade al array de favoritos las series marcadas como favoritas
 function addFavorite(ev) {
   const selectedAnimeId = ev.currentTarget.id;
-  const favoriteAnimeData = favorites.find((row) => row.id === selectedAnimeId);
+  const favoriteAnimeData = favorites.find((row) => row === selectedAnimeId);
   if (favoriteAnimeData === undefined) {
-    favorites.push(ev.currentTarget);
+    favorites.push(ev.currentTarget.id);
     renderFavorite(ev);
   } else {
-    const findAnimeId = favorites.findIndex(
-      (row) => row.id === selectedAnimeId
-    );
+    const findAnimeId = favorites.findIndex((row) => row === selectedAnimeId);
     favorites.splice(findAnimeId, 1);
-    favList.childNodes[findAnimeId].innerHTML = "";
+    favList.childNodes[findAnimeId].outerHTML = "";
   }
-  //localStorage.setItem("favoritos", favList.innerHTML);
 }
 
+//Elimina el elemenro de favoritos del array y elimina la clase "favorite" de el li
 function removeFavoriteFromArray(ev) {
   const findAnimeId = favorites.findIndex(
-    (row) => row.id === ev.currentTarget.parentNode.id
+    (row) => row === ev.currentTarget.parentNode.id
   );
   const favoriteRemoved = favorites.splice(findAnimeId, 1);
   const resultListChilds = resultList.childNodes;
   //Si me sobra tiempo, intentar hacer esto con find
   for (const result of resultListChilds) {
-    if (result.id === favoriteRemoved[0].id) {
+    if (result.id === favoriteRemoved[0]) {
       result.classList.remove("favorite");
     }
   }
 }
 
+//Elimina visualmente un elemento de la lista de favoritos
 function removeFavoriteRender(ev) {
   ev.currentTarget.parentNode.outerHTML = "";
+}
+
+//Recupera los datos de favoritos del local storage
+function renderFavs() {
+  showFavorites();
+  favorites = JSON.parse(localStorage.getItem("favorites"));
+  favList.innerHTML = localStorage.getItem("favorites_html");
+}
+
+//Si tenemos algo en el local stotage, llama a renderFavs para recuperar los datos de favoritos
+if (localStorage.getItem("favorites_html") !== null) {
+  renderFavs();
 }
 
 ///////////////////////////////////////////////Funciones manejadoras de eventos
@@ -137,6 +163,8 @@ function removeFavoriteRender(ev) {
 function handleClickRemove(ev) {
   removeFavoriteFromArray(ev);
   removeFavoriteRender(ev);
+  localStorage.setItem("favorites", JSON.stringify(favorites));
+  localStorage.setItem("favorites_html", favList.innerHTML);
 }
 
 //Busca los resultados en la API y los muestra
@@ -150,14 +178,18 @@ function handleClickSearch(ev) {
 function handleClickResultList(ev) {
   highlightFavorite(ev);
   addFavorite(ev);
+  localStorage.setItem("favorites", JSON.stringify(favorites));
+  localStorage.setItem("favorites_html", favList.innerHTML);
 }
 
+//Borra el input y la lista de resultados
 function handleResetBtn(ev) {
   ev.preventDefault();
   input.value = "";
   resultList.innerHTML = "";
 }
 
+//Borra visualmente, del array y del local storage todos los favoritos
 function handleResetFavoritesBtn(ev) {
   ev.preventDefault();
   favList.innerHTML = "";
@@ -169,28 +201,10 @@ function handleResetFavoritesBtn(ev) {
       result.classList.remove("favorite");
     }
   }
-  //localStorage.clear("favoritos");
+  localStorage.clear("favorites");
 }
 ///////////////////////////////////////////////Eventos
 
 searchBtn.addEventListener("click", handleClickSearch);
 resetBtn.addEventListener("click", handleResetBtn);
 resetFavoritesBtn.addEventListener("click", handleResetFavoritesBtn);
-
-//Local storage
-
-// ¿Qué quiero guardar en el local storage?
-//   1. Los elementos de la lista de resultados que tengan la clase "favorite", es decir, que se guarde esa clase aunque no estén pintados
-//   2. La lista de favoritos: el array
-// ¿Qué es lo que quiero recuperar al recargar la página
-//   1. Cuando una serie de resultados esté en favoritos, tiene que tener esa clase y aparecer en otro color
-//   2. La lista de favoritos ya renderizada
-
-// function renderFavs() {
-//   showFavorites();
-//   favList.innerHTML = localStorage.getItem("favoritos");
-// }
-// if (localStorage.getItem("favoritos") !== null) {
-//   renderFavs();
-// }
-//Cuando recargo la página, me recupera los favoritos pero me deja añadirlos de nuevo por lo que aparecen duplicados...
