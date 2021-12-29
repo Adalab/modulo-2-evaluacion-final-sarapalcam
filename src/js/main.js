@@ -1,11 +1,9 @@
 "use strict";
 
 //Cosas que faltan por hacer:
-///////Quitar el elemento del array de favoritos cuando hago click en la "x" de un favorito
-///////Quitarle la clase de favoritos al elemento en resultados al que estoy sacando de favoritos al hacer click en la "x" de un favorito
-///////Hacer eventos sobre los dos botones de reset
-///////Hacer que al clickar sobre un elemento en resultados marcado como favorito, este se elimine de la lista de favoritos
+///////Separar más las funciones, cambiar for of por fins siempre que sea posible
 ///////LocalStorage de las series favoritas, que también aparezcan marcadas en la lista de resultados si aparecen en la búsqueda -> También tendrán que eliminarse del localStorage cuando las eliminemos de la lista
+///////Que las series favoritas sigan marcadas como tal en resultados (esto creo que es con el local storage)
 ///////CSS
 ///////Extras si me da tiempo: modo noche, versión responsive (que en el móvil los favoritos estén ocultos y los podamos desplegar abriendo un menú)
 
@@ -17,12 +15,12 @@ const resetBtn = document.querySelector(".js-reset-btn");
 const favSection = document.querySelector(".js-favorites-section");
 const resultSection = document.querySelector(".js-result-section");
 const favList = document.querySelector(".js-favorites-list");
+const resetFavoritesBtn = document.querySelector(".js-reset-favorites-btn");
 const resultList = document.querySelector(".js-result-list");
 
 /////////////////////////////////////////////////Creamos nuestas constantes globales
-
-const favorites = [];
-
+let favorites = [];
+let numbers = [1, 35, 46, 23, 57];
 ///////////////////////////////////////////////Funciones
 
 //Pinta las portadas y títulos en la lista de resultados a través de DOM avanzado
@@ -30,7 +28,7 @@ function renderResults(animeData) {
   resultList.innerHTML = "";
   for (const data of animeData) {
     const newLiEl = document.createElement("li");
-    newLiEl.id = `${data.title}`;
+    newLiEl.id = `${data.mal_id}`;
     const newImgEl = document.createElement("img");
     const newParagraphEl = document.createElement("p");
     if (data.image_url === null || data.image_url === undefined) {
@@ -47,6 +45,7 @@ function renderResults(animeData) {
     newLiEl.appendChild(newImgEl);
     newLiEl.appendChild(newParagraphEl);
     resultList.appendChild(newLiEl);
+    //results.push(newLiEl);
     //Evento para añadir a favoritos una serie
     newLiEl.addEventListener("click", handleClickResultList);
   }
@@ -77,6 +76,11 @@ function showFavorites() {
   favSection.classList.remove("hidden");
 }
 
+//Señala las series marcadas o desmarcadas como favoritas
+function highlightFavorite(ev) {
+  ev.currentTarget.classList.toggle("favorite");
+}
+
 //Añade listeners a todos los iconos de elimiar de favoritos
 function removeFavorites(icons) {
   for (const icon of icons) {
@@ -87,15 +91,9 @@ function removeFavorites(icons) {
 //Pinta las portadas y títulos de las series marcadas como favoritas
 function renderFavorite(ev) {
   showFavorites();
-  console.log(ev.currentTarget.id);
   favList.innerHTML += `<li id="${ev.currentTarget.id}">${ev.currentTarget.innerHTML} <i class="far fa-times-circle remove_favorite"></i></li>`;
   const removeIcons = document.querySelectorAll(".remove_favorite");
   removeFavorites(removeIcons);
-}
-
-//Señala las series marcadas o desmarcadas como favoritas
-function highlightFavorite(ev) {
-  ev.currentTarget.classList.toggle("favorite");
 }
 
 //Añade al array de favoritos las series marcadas como favoritas
@@ -105,22 +103,40 @@ function addFavorite(ev) {
   if (favoriteAnimeData === undefined) {
     favorites.push(ev.currentTarget);
     renderFavorite(ev);
+  } else {
+    const findAnimeId = favorites.findIndex(
+      (row) => row.id === selectedAnimeId
+    );
+    favorites.splice(findAnimeId, 1);
+    favList.childNodes[findAnimeId].innerHTML = "";
   }
+  //localStorage.setItem("favoritos", favList.innerHTML);
+}
+
+function removeFavoriteFromArray(ev) {
+  const findAnimeId = favorites.findIndex(
+    (row) => row.id === ev.currentTarget.parentNode.id
+  );
+  const favoriteRemoved = favorites.splice(findAnimeId, 1);
+  const resultListChilds = resultList.childNodes;
+  //Si me sobra tiempo, intentar hacer esto con find
+  for (const result of resultListChilds) {
+    if (result.id === favoriteRemoved[0].id) {
+      result.classList.remove("favorite");
+    }
+  }
+}
+
+function removeFavoriteRender(ev) {
+  ev.currentTarget.parentNode.outerHTML = "";
 }
 
 ///////////////////////////////////////////////Funciones manejadoras de eventos
 
-//Elimina el título y la portada de la lista de favoritos (OJO! EN EL ARRAY DE FAVORITOS SIGUE ESTANDO). Tengo que quitar el elemento del array de favoritos y quitarle la clase de favoritos al elemento en resultados
+//Elimina el título y la portada de la lista de favoritos y el elemento favorito del array favorites
 function handleClickRemove(ev) {
-  console.dir(ev.currentTarget.parentNode.id);
-  for (let i = 0; i < favorites.length; i++) {
-    if (ev.currentTarget.parentNode.id === favorites[i].id) {
-      console.log(ev.currentTarget.parentNode.id);
-      console.log(favorites[i].id);
-      favorites.splice(favorites[i], 1);
-      ev.currentTarget.parentNode.outerHTML = "";
-    } //NO FUNIONA, VER QUÉ PASA
-  }
+  removeFavoriteFromArray(ev);
+  removeFavoriteRender(ev);
 }
 
 //Busca los resultados en la API y los muestra
@@ -136,47 +152,45 @@ function handleClickResultList(ev) {
   addFavorite(ev);
 }
 
+function handleResetBtn(ev) {
+  ev.preventDefault();
+  input.value = "";
+  resultList.innerHTML = "";
+}
+
+function handleResetFavoritesBtn(ev) {
+  ev.preventDefault();
+  favList.innerHTML = "";
+  favorites = [];
+  const resultListChilds = resultList.childNodes;
+  //Esto quizás lo pueda hacer con un filter en vez de con un for of
+  for (const result of resultListChilds) {
+    if (result.classList.contains("favorite")) {
+      result.classList.remove("favorite");
+    }
+  }
+  //localStorage.clear("favoritos");
+}
 ///////////////////////////////////////////////Eventos
 
 searchBtn.addEventListener("click", handleClickSearch);
+resetBtn.addEventListener("click", handleResetBtn);
+resetFavoritesBtn.addEventListener("click", handleResetFavoritesBtn);
 
-// Tengo que averiguar cómo eliminar un favorito al clickar en él en la lista de resultados
-//   else {
-//     for (let i = 0; i < favorites.length; i++) {
-//       if (selectedAnimeId === favorites[i].id) {
-//         favorites.splice(favorites[i], 1);
-//       }
-//     }
-//   }
+//Local storage
 
-//PARA HACER LA LISTA DE FAVORITOS CON DOM AVANZADO (renderFavorite), AÚN NO TENGO CLARO QUÉ ES LO MEJOR
+// ¿Qué quiero guardar en el local storage?
+//   1. Los elementos de la lista de resultados que tengan la clase "favorite", es decir, que se guarde esa clase aunque no estén pintados
+//   2. La lista de favoritos: el array
+// ¿Qué es lo que quiero recuperar al recargar la página
+//   1. Cuando una serie de resultados esté en favoritos, tiene que tener esa clase y aparecer en otro color
+//   2. La lista de favoritos ya renderizada
 
-/* const newLiEl = document.createElement("li");
-newLiEl.id = `${ev.currentTarget.childNodes[1].innerText}`;
-const newImgEl = document.createElement("img");
-const newParagraphEl = document.createElement("p");
-const newIconEl = document.createElement("i");
-if (
-  ev.currentTarget.childNodes[0].currentSrc === null ||
-  ev.currentTarget.childNodes[0].currentSrc === undefined
-) {
-  newImgEl.src = "https://via.placeholder.com/225x317/ffffff/666666/?text=TV";
-} else {
-  newImgEl.src = ev.currentTarget.childNodes[0].currentSrc;
-}
-newImgEl.style = "height: 317px; width: 225px; background-size: cover";
-newImgEl.alt = `Imagen de portada de ${ev.currentTarget.childNodes[1].innerText}`;
-newImgEl.title = `Imagen de portada de ${ev.currentTarget.childNodes[1].innerText}`;
-const newParagraphContent = document.createTextNode(
-  `${ev.currentTarget.childNodes[1].innerText}`
-);
-newParagraphEl.appendChild(newParagraphContent);
-newIconEl.classList.add("far");
-newIconEl.classList.add("fa-times-circle");
-newIconEl.classList.add("remove_favorite");
-newLiEl.appendChild(newImgEl);
-newLiEl.appendChild(newParagraphEl);
-newLiEl.appendChild(newIconEl);
-favList.appendChild(newLiEl);
-const removeIcons = document.querySelectorAll(".remove_favorite");
-removeFavorites(removeIcons); */
+// function renderFavs() {
+//   showFavorites();
+//   favList.innerHTML = localStorage.getItem("favoritos");
+// }
+// if (localStorage.getItem("favoritos") !== null) {
+//   renderFavs();
+// }
+//Cuando recargo la página, me recupera los favoritos pero me deja añadirlos de nuevo por lo que aparecen duplicados...
