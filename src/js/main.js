@@ -43,6 +43,7 @@ function renderResults(animeData) {
     const newLiEl = document.createElement("li");
     newLiEl.id = `${data.mal_id}`;
     newLiEl.classList.add("js-li-results");
+    newLiEl.classList.add("anime__resultlist--el");
     const newImgEl = document.createElement("img");
     const newParagraphEl = document.createElement("p");
     if (data.image_url === null || data.image_url === undefined) {
@@ -106,7 +107,7 @@ function removeFavorites(icons) {
 //Pinta las portadas y títulos de las series marcadas como favoritas
 function renderFavorite(ev) {
   showFavorites();
-  favList.innerHTML += `<li id="${ev.currentTarget.id}">${ev.currentTarget.innerHTML} <i class="far fa-times-circle remove_favorite"></i></li>`;
+  favList.innerHTML += `<li class="anime__favlist--el" id="${ev.currentTarget.id}"><div class="anime__favlist--container">${ev.currentTarget.innerHTML}</div> <i class="far fa-times-circle remove_favorite anime__favlist--remove"></i></li>`;
   const removeIcons = document.querySelectorAll(".remove_favorite");
   removeFavorites(removeIcons);
 }
@@ -150,6 +151,8 @@ function renderFavs() {
   showFavorites();
   favorites = JSON.parse(localStorage.getItem("favorites"));
   favList.innerHTML = localStorage.getItem("favorites_html");
+  const removeIcons = document.querySelectorAll(".remove_favorite");
+  removeFavorites(removeIcons);
 }
 
 //Si tenemos algo en el local stotage, llama a renderFavs para recuperar los datos de favoritos
@@ -208,3 +211,4 @@ function handleResetFavoritesBtn(ev) {
 searchBtn.addEventListener("click", handleClickSearch);
 resetBtn.addEventListener("click", handleResetBtn);
 resetFavoritesBtn.addEventListener("click", handleResetFavoritesBtn);
+//"touchend" o "touchstart" para tap

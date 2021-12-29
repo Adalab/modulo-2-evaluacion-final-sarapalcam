@@ -1,0 +1,42 @@
+.form {
+  margin: 20px 10%;
+  display: flex;
+  flex-direction: column;
+  &__label {
+    font-size: 18px;
+    line-height: 20px;
+    font-weight: bold;
+  }
+  &__input {
+    border-radius: 3px;
+    border: rgb(103, 88, 122) solid 1.5px;
+    padding: 5px;
+    margin: 10px 0;
+  }
+  &__btn {
+    display: flex;
+    width: 200px;
+    justify-content: space-between;
+    &--search {
+      width: 90px;
+      padding: 7px;
+      border-radius: 50px;
+      border: none;
+      background-color: rgb(27, 18, 37);
+      color: white;
+      cursor: pointer;
+      box-shadow: 3px 3px 7px rgba($color: #000000, $alpha: 0.3);
+    }
+    &--reset {
+      width: 90px;
+      width: 90px;
+      padding: 7px;
+      border-radius: 50px;
+      border: none;
+      background-color: rgb(119, 29, 37);
+      color: white;
+      cursor: pointer;
+      box-shadow: 3px 3px 7px rgba($color: #000000, $alpha: 0.3);
+    }
+  }
+}

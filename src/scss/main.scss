@@ -1,2 +1,8 @@
 @import "./core/reset.scss";
-@import "./layout/main.scss";
+@import "./core/variables";
+@import "./core/mixins.scss";
+@import "./layout/01_body";
+@import "./layout/02_header";
+@import "./layout/03_form";
+@import "./layout/04_main.scss";
+@import "./layout/05_footer";
