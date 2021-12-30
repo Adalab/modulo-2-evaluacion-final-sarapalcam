@@ -3,8 +3,6 @@
 //Cosas que faltan por hacer:
 ///////En general está todo bastante poco elegante, si sobre tiempo intentar mejorar el código, creo que la clave es crear un objetos para cada serie favorita y meter eso en el array. Separar funciones, evitar "for", renombrar elementos, evitar guardar HTML en local storage
 ///////Includes en HTML, CSS y JS
-///////CSS
-///////Extras si me da tiempo: modo noche, versión responsive (que en el móvil los favoritos estén ocultos y los podamos desplegar abriendo un menú)
 
 ///////////////////////////////////////////////Traemos los elementos que necesitamos de HTML
 const input = document.querySelector(".js-input");
@@ -13,6 +11,9 @@ const resetBtn = document.querySelector(".js-reset-btn");
 const favList = document.querySelector(".js-favorites-list");
 const resetFavoritesBtn = document.querySelector(".js-reset-favorites-btn");
 const resultList = document.querySelector(".js-result-list");
+const headerMenu = document.querySelector(".js-header-menu");
+const favoritesSection = document.querySelector(".js-favorites-section");
+const resultsArrow = document.querySelector(".js-results-arrow");
 
 /////////////////////////////////////////////////Creamos nuestas constantes globales
 let favorites = [];
@@ -176,6 +177,7 @@ function handleClickSearch(ev) {
   ev.preventDefault();
   fetchResults();
   showResults();
+  resultsArrow.classList.remove("hidden");
 }
 
 //Señala y añade al array de favoritos los favoritos
@@ -191,11 +193,14 @@ function handleResetBtn(ev) {
   ev.preventDefault();
   input.value = "";
   resultList.innerHTML = "";
+  resultsArrow.classList.add("hidden");
 }
 
 //Borra visualmente, del array y del local storage todos los favoritos
 function handleResetFavoritesBtn(ev) {
   ev.preventDefault();
+
+  favoritesSection.classList.add("hidden");
   favList.innerHTML = "";
   favorites = [];
   const resultListChilds = resultList.childNodes;
@@ -207,9 +212,30 @@ function handleResetFavoritesBtn(ev) {
   }
   localStorage.clear("favorites");
 }
+
+function handleClickHeader() {
+  favoritesSection.classList.toggle("hidden");
+  headerMenu.classList.toggle("rotate");
+  window.scrollTo(0, 0);
+}
+
+function handleScrollHeader() {
+  if (window.scrollY > 130) {
+    headerMenu.classList.add("black");
+  } else if (headerMenu.getBoundingClientRect(0, 130)) {
+    headerMenu.classList.remove("black");
+  }
+}
+
+function handleClickArrow() {
+  window.scrollTo(0, 0);
+}
 ///////////////////////////////////////////////Eventos
 
 searchBtn.addEventListener("click", handleClickSearch);
 resetBtn.addEventListener("click", handleResetBtn);
 resetFavoritesBtn.addEventListener("click", handleResetFavoritesBtn);
+headerMenu.addEventListener("click", handleClickHeader);
+document.addEventListener("scroll", handleScrollHeader);
+resultsArrow.addEventListener("click", handleClickArrow);
 //"touchend" o "touchstart" para tap

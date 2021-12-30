@@ -1,0 +1,86 @@
+.header__menu {
+  transition: font-size ease-in-out 0.3s;
+  &:hover {
+    font-size: 55px;
+  }
+}
+
+.form__input {
+  transition: all ease-in-out 0.4s;
+  &:hover {
+    border: rgb(95, 95, 95) solid 1.5px;
+    border-radius: 8px;
+  }
+  &:focus {
+    border: rgb(226, 226, 226) solid 4px;
+    border-radius: 8px;
+  }
+}
+
+.form__btn--search {
+  transition: all ease-in-out 0.3s;
+  &:hover {
+    transform: translateY(-3px);
+    background-color: rgb(31, 153, 86);
+  }
+}
+
+.form__btn--reset {
+  transition: all ease-in-out 0.3s;
+  &:hover {
+    transform: translateY(-3px);
+    background-color: rgb(255, 0, 0);
+  }
+}
+
+.anime__favorites--list--remove {
+  transition: all ease-in-out 0.2s;
+  &:hover {
+    color: rgb(255, 0, 0);
+    border: solid 3px rgb(255, 0, 0);
+  }
+}
+
+.anime__favorites--btn {
+  transition: all ease-in-out 0.3s;
+  &:hover {
+    transform: translateY(-5px);
+    background-color: rgb(255, 0, 0);
+  }
+}
+
+.anime__results--list--el {
+  transition: all ease-in 0.4s;
+  &:hover {
+    background-color: rgba(255, 255, 255, 0.233);
+    border-radius: 10px;
+  }
+}
+
+.anime__results--arrow {
+  transition: all ease-in 0.2s;
+  &:hover {
+    font-size: 55px;
+  }
+}
+
+.footer__contact--github {
+  transition: all ease-in 0.2s;
+  &:hover {
+    font-size: 30px;
+  }
+}
+
+.footer__contact--linkedin {
+  transition: all ease-in 0.2s;
+  &:hover {
+    font-size: 30px;
+  }
+}
+
+.footer__contact--instagram {
+  transition: all ease-in 0.2s;
+  &:hover {
+    font-size: 30px;
+  }
+}

@@ -1,0 +1,15 @@
+.anime__results--arrow {
+  animation: bounce 2s ease-in-out infinite;
+}
+
+@keyframes bounce {
+  0% {
+    transform: translate(0, 0px);
+  }
+  50% {
+    transform: translate(0, -16px);
+  }
+  100% {
+    transform: translate(0, 0px);
+  }
+}

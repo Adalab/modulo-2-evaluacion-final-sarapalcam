@@ -1,13 +1,19 @@
 .header {
-  background-color: rgb(27, 18, 37);
-  color: white;
+  background-color: $ppalColor;
+  color: $scndColor;
   font-size: 36px;
   line-height: 42px;
-  padding: 20px 10%;
+  padding: 25px 10%;
   width: 100%;
+  height: 130px;
+  @include tablet {
+    height: 90px;
+  }
   &__title {
+    margin-top: 4%;
     max-width: 250px;
     @include tablet {
+      margin-top: 0;
       max-width: unset;
     }
   }
@@ -15,7 +21,16 @@
     position: fixed;
     right: -1px;
     top: -5px;
-    color: rgb(95, 75, 117);
+    color: $scndColor;
     font-size: 50px;
+    z-index: 999;
+    cursor: pointer;
+    @include tablet {
+      display: none;
+    }
   }
+}
+
+.black {
+  color: black;
 }

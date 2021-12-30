@@ -16,7 +16,7 @@
   }
   &__input {
     border-radius: 3px;
-    border: rgb(103, 88, 122) solid 1.5px;
+    border: $ppalColor solid 1.5px;
     padding: 5px;
     margin: 10px 0;
     width: 100%;
@@ -36,10 +36,10 @@
       padding: 7px;
       border-radius: 50px;
       border: none;
-      background-color: rgb(27, 18, 37);
-      color: white;
+      background-color: $ppalColor;
+      color: $scndColor;
       cursor: pointer;
-      box-shadow: 3px 3px 7px rgba($color: #000000, $alpha: 0.3);
+      box-shadow: 3px 3px 7px rgba($color: $ppalColor, $alpha: 0.3);
       @include tablet {
         height: 33px;
       }
@@ -50,10 +50,10 @@
       padding: 7px;
       border-radius: 50px;
       border: none;
-      background-color: rgb(119, 29, 37);
-      color: white;
+      background-color: $deleteColor;
+      color: $scndColor;
       cursor: pointer;
-      box-shadow: 3px 3px 7px rgba($color: #000000, $alpha: 0.3);
+      box-shadow: 3px 3px 7px rgba($color: $ppalColor, $alpha: 0.3);
     }
   }
 }
