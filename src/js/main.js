@@ -199,7 +199,7 @@ function handleResetBtn(ev) {
 //Borra visualmente, del array y del local storage todos los favoritos
 function handleResetFavoritesBtn(ev) {
   ev.preventDefault();
-
+  headerMenu.classList.toggle("rotate");
   favoritesSection.classList.add("hidden");
   favList.innerHTML = "";
   favorites = [];
