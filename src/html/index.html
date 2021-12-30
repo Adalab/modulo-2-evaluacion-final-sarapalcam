@@ -22,7 +22,7 @@
   <body class="body">
     <header class="header">
       <h1 class="header__title">Buscador de series de Anime</h1>
-      <i class="fas fa-caret-square-down header__menu hidden"></i>
+      <i class="fas fa-caret-square-down header__menu"></i>
     </header>
     <main>
       <form class="form" action="#">
@@ -51,7 +51,9 @@
         <section class="anime__favorites">
           <h2 class="anime__favorites--title">Series favoritas</h2>
           <ul class="js-favorites-list anime__favorites--list hidden"></ul>
-          <button class="js-reset-favorites-btn">Borrar favoritos</button>
+          <button class="js-reset-favorites-btn anime__favorites--btn">
+            Borrar favoritos
+          </button>
         </section>
         <section class="anime__results">
           <h2 class="anime__results--title">Resultados</h2>
@@ -59,7 +61,7 @@
         </section>
       </div>
     </main>
-    <footer>
+    <footer class="footer">
       <small>&copy; Sara Palomo Campesino</small>
     </footer>
     <script type="text/javascript" src="./assets/js/main.js"></script>
