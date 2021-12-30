@@ -43,7 +43,7 @@ function renderResults(animeData) {
     const newLiEl = document.createElement("li");
     newLiEl.id = `${data.mal_id}`;
     newLiEl.classList.add("js-li-results");
-    newLiEl.classList.add("anime__resultlist--el");
+    newLiEl.classList.add("anime__results--list--el");
     const newImgEl = document.createElement("img");
     const newParagraphEl = document.createElement("p");
     if (data.image_url === null || data.image_url === undefined) {
@@ -55,6 +55,7 @@ function renderResults(animeData) {
     newImgEl.style = "height: 317px; width: 225px; background-size: cover";
     newImgEl.alt = `Imagen de portada de ${data.title}`;
     newImgEl.title = `Imagen de portada de ${data.title}`; //TENGO QUE PONER ESTOS ELEMENTOS DE LAS IMÁGENES EN FAVORITOS
+    newParagraphEl.classList.add("anime__results--list--title");
     const newParagraphContent = document.createTextNode(`${data.title}`);
     newParagraphEl.appendChild(newParagraphContent);
     newLiEl.appendChild(newImgEl);
@@ -107,7 +108,7 @@ function removeFavorites(icons) {
 //Pinta las portadas y títulos de las series marcadas como favoritas
 function renderFavorite(ev) {
   showFavorites();
-  favList.innerHTML += `<li class="anime__favlist--el" id="${ev.currentTarget.id}"><div class="anime__favlist--container">${ev.currentTarget.innerHTML}</div> <i class="far fa-times-circle remove_favorite anime__favlist--remove"></i></li>`;
+  favList.innerHTML += `<li class="anime__favorites--list--el" id="${ev.currentTarget.id}"><div class="anime__favorites--list--container">${ev.currentTarget.innerHTML}</div> <i class="fas fa-times-circle remove_favorite anime__favorites--list--remove"></i></li>`;
   const removeIcons = document.querySelectorAll(".remove_favorite");
   removeFavorites(removeIcons);
 }
