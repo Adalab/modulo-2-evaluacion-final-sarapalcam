@@ -1,9 +1,5 @@
 "use strict";
 
-//Cosas que faltan por hacer:
-///////En general está todo bastante poco elegante, si sobre tiempo intentar mejorar el código, creo que la clave es crear un objetos para cada serie favorita y meter eso en el array. Separar funciones, evitar "for", renombrar elementos, evitar guardar HTML en local storage
-///////Includes en HTML, CSS y JS
-
 ///////////////////////////////////////////////Traemos los elementos que necesitamos de HTML
 const input = document.querySelector(".js-input");
 const searchBtn = document.querySelector(".js-search-btn");
