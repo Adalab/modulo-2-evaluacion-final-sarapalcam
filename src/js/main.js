@@ -1,10 +1,6 @@
 "use strict";
 
-//Cosas que faltan por hacer:
-///////En general está todo bastante poco elegante, si sobre tiempo intentar mejorar el código, creo que la clave es crear un objetos para cada serie favorita y meter eso en el array. Separar funciones, evitar "for", renombrar elementos, evitar guardar HTML en local storage
-///////Includes en HTML, CSS y JS
-
-///////////////////////////////////////////////Traemos los elementos que necesitamos de HTML
+/////////////Elementos de HTML
 const input = document.querySelector(".js-input");
 const searchBtn = document.querySelector(".js-search-btn");
 const resetBtn = document.querySelector(".js-reset-btn");
@@ -15,211 +11,207 @@ const headerMenu = document.querySelector(".js-header-menu");
 const favoritesSection = document.querySelector(".js-favorites-section");
 const resultsArrow = document.querySelector(".js-results-arrow");
 
-/////////////////////////////////////////////////Creamos nuestas constantes globales
+/////////////Constantes globales
 let favorites = [];
+let results = [];
 
-///////////////////////////////////////////////Funciones
+/////////////Funciones
 
-//Pinta los elementos marcados como favoritos en resultados y guardados en el localstorage
-function renderFavoriteHighliht(allLiEl) {
-  let results = [];
-  for (const item of allLiEl) {
-    results.push(item.id);
+//Tomar el valor del input
+function getInputValue() {
+  return input.value;
+}
+
+//Renderizar los resultados del fetch con DOM
+function renderResults(results) {
+  resultList.innerHTML = "";
+  for (const result of results) {
+    const newLi = document.createElement("li");
+    newLi.id = `${result.mal_id}`;
+    newLi.classList.add("js-li-results");
+    newLi.classList.add("anime__results--list--el");
+    const newImg = document.createElement("img");
+    if (result.image_url === null || result.image_url === undefined) {
+      newImg.src = "https://via.placeholder.com/225x317/ffffff/666666/?text=TV";
+    } else {
+      newImg.src = result.image_url;
+    }
+    newImg.style = "height: 317px; width: 225px; background-size: cover";
+    newImg.alt = `Imagen de portada de ${result.title}`;
+    newImg.title = `Imagen de portada de ${result.title}`;
+    const newParagraph = document.createElement("p");
+    const newParagraphContent = document.createTextNode(`${result.title}`);
+    newParagraph.appendChild(newParagraphContent);
+    newLi.appendChild(newImg);
+    newLi.appendChild(newParagraph);
+    resultList.appendChild(newLi);
+    newLi.addEventListener("click", handleClickListElement);
   }
-  console.log(results);
+  showHighlitedResults();
+}
+
+//Hacer petición al servidor con el input de la usuaria
+function fetchData() {
+  const inputValue = getInputValue();
+  fetch(`https://api.jikan.moe/v3/search/anime?q=${inputValue}`)
+    .then((response) => response.json())
+    .then((animeData) => {
+      results = [];
+      for (const result of animeData.results) {
+        results.push(result);
+      }
+      renderResults(results);
+    });
+}
+
+//Alternar la clase de favoritos al clicar en los elemetos de resultados
+function toggleFavoriteClass(ev) {
+  ev.currentTarget.classList.toggle("favorite");
+}
+
+//Crear un nuevo objeto de favoritos al clicar sobre un elemeto de resultados
+function createNewFavorite(ev) {
+  let favorite = {
+    id: ev.currentTarget.id,
+    image_url: ev.currentTarget.childNodes[0].currentSrc,
+    title: ev.currentTarget.childNodes[1].innerText,
+  };
+  return favorite;
+}
+
+//Guardar el array de favoritos en el localStorage
+function saveFavoritesArray() {
+  localStorage.setItem("favorites", JSON.stringify(favorites));
+}
+
+//Renderizar el listado de favoritos con DOM
+function renderFavorites() {
+  favList.classList.remove("hidden");
+  favList.innerHTML = "";
   for (const favorite of favorites) {
-    const findFavorite = results.find((row) => row === favorite);
-    console.log(findFavorite);
-    for (const liItem of allLiEl) {
-      if (findFavorite === liItem.id) {
-        liItem.classList.add("favorite");
+    const newLi = document.createElement("li");
+    newLi.id = `${favorite.id}`;
+    newLi.classList.add("anime__favorites--list--el");
+    const newDiv = document.createElement("div");
+    newDiv.classList.add("anime__favorites--list--container");
+    const newImg = document.createElement("img");
+    newImg.src = favorite.image_url;
+    newImg.style = "height: 170px; width: 121px; background-size: cover";
+    newImg.alt = `Imagen de portada de ${favorite.title}`;
+    newImg.title = `Imagen de portada de ${favorite.title}`;
+    const newParagraph = document.createElement("p");
+    const newParagraphContent = document.createTextNode(`${favorite.title}`);
+    const newIcon = document.createElement("i");
+    newIcon.classList.add("fas");
+    newIcon.classList.add("fa-times-circle");
+    newIcon.classList.add("js-remove_favorite");
+    newIcon.classList.add("anime__favorites--list--remove");
+    newParagraph.appendChild(newParagraphContent);
+    newDiv.appendChild(newImg);
+    newDiv.appendChild(newParagraph);
+    newLi.appendChild(newDiv);
+    newLi.appendChild(newIcon);
+    favList.appendChild(newLi);
+    const removeIcon = document.querySelectorAll(".js-remove_favorite");
+    for (const icon of removeIcon) {
+      icon.addEventListener("click", handleClickRemoveIcon);
+    }
+  }
+  saveFavoritesArray();
+}
+
+//Añadir un nuevo objeto al array de favoritos (si no está ya marcado como favorito) al clicar sobre un elemento de resultados
+function addToFavorites(ev) {
+  const favorite = createNewFavorite(ev);
+  const selectedAnimeId = ev.currentTarget.id;
+  const favoriteAnime = favorites.find((fav) => fav.id === selectedAnimeId);
+  if (favoriteAnime === undefined) {
+    favorites.push(favorite);
+  } else {
+    const favoriteAnimeIndex = favorites.findIndex(
+      (fav) => fav.id === selectedAnimeId
+    );
+    favorites.splice(favoriteAnimeIndex, 1);
+  }
+  renderFavorites(favorite);
+}
+
+//Eliminar el estilo de los favoritos en la lista de resultados al clicar en las "x" de favoritos
+function deleteHighlitedResults(ev) {
+  const selectedFavoriteId = ev.currentTarget.parentNode.id;
+  const renderedResultsLi = document.querySelectorAll(".js-li-results");
+  for (const item of renderedResultsLi) {
+    if (selectedFavoriteId === item.id) {
+      item.classList.remove("favorite");
+    }
+  }
+}
+
+//Eliminar un elemento del array de favoritos al clicar en las "x" de favoritos
+function removeFromFavorites(ev) {
+  const selectedFavoriteId = ev.currentTarget.parentNode.id;
+  const favoriteAnimeIndex = favorites.findIndex(
+    (fav) => fav.id === selectedFavoriteId
+  );
+  favorites.splice(favoriteAnimeIndex, 1);
+  deleteHighlitedResults(ev);
+  renderFavorites();
+}
+
+//Borrar el input y la lista de resultados
+function resetResults() {
+  input.value = "";
+  resultList.innerHTML = "";
+}
+
+//Eliminar el estilo de todos los favoritos en la lista de resultados al clicar sobre el botón de "borrar favoritos"
+function deleteAllHighlitedResults() {
+  const renderedResultsLi = document.querySelectorAll(".js-li-results");
+  for (const item of renderedResultsLi) {
+    item.classList.remove("favorite");
+  }
+}
+
+//Eliminar del array, del localStorage, y de la pantalla todo el listado de favoritos al clicar sobre el botón de "borrar favoritos"
+function removeAllFavorites() {
+  favorites = [];
+  localStorage.clear("favorites");
+  deleteAllHighlitedResults();
+  renderFavorites();
+}
+
+//Mostrar el estilo de todos los favoritos en la lista de resultados aunque cambiemos de búsqueda o recarguemos la página
+function showHighlitedResults() {
+  const renderedResultsLi = document.querySelectorAll(".js-li-results");
+  for (const item of renderedResultsLi) {
+    for (const favorite of favorites) {
+      if (favorite.id === item.id) {
+        item.classList.add("favorite");
       }
     }
   }
 }
 
-function renderResults(animeData) {
-  resultList.innerHTML = "";
-  for (const data of animeData) {
-    const newLiEl = document.createElement("li");
-    newLiEl.id = `${data.mal_id}`;
-    newLiEl.classList.add("js-li-results");
-    newLiEl.classList.add("anime__results--list--el");
-    const newImgEl = document.createElement("img");
-    const newParagraphEl = document.createElement("p");
-    if (data.image_url === null || data.image_url === undefined) {
-      newImgEl.src =
-        "https://via.placeholder.com/225x317/ffffff/666666/?text=TV";
-    } else {
-      newImgEl.src = data.image_url;
-    }
-    newImgEl.style = "height: 317px; width: 225px; background-size: cover";
-    newImgEl.alt = `Imagen de portada de ${data.title}`;
-    newImgEl.title = `Imagen de portada de ${data.title}`; //TENGO QUE PONER ESTOS ELEMENTOS DE LAS IMÁGENES EN FAVORITOS
-    newParagraphEl.classList.add("anime__results--list--title");
-    const newParagraphContent = document.createTextNode(`${data.title}`);
-    newParagraphEl.appendChild(newParagraphContent);
-    newLiEl.appendChild(newImgEl);
-    newLiEl.appendChild(newParagraphEl);
-    resultList.appendChild(newLiEl);
-    //Evento para añadir a favoritos una serie
-    newLiEl.addEventListener("click", handleClickResultList);
-  }
-  const allLiEl = document.querySelectorAll(".js-li-results");
-  renderFavoriteHighliht(allLiEl);
-}
-
-//Toma el valor que la usuaria introduce en la barra de búsqueda
-function getInputValue() {
-  return input.value;
-}
-
-//Toma los datos de las series de una API en función del input de búsqueda de la usuaria
-function fetchResults() {
-  const inputValue = getInputValue();
-  fetch(`https://api.jikan.moe/v3/search/anime?q=${inputValue}`)
-    .then((response) => response.json())
-    .then((animeDataFetch) => {
-      renderResults(animeDataFetch.results);
-    });
-}
-
-//Muestra la sección de resultados
-function showResults() {
-  resultList.classList.remove("hidden");
-}
-
-//Muestra la sección de favoritos
-function showFavorites() {
-  favList.classList.remove("hidden");
-}
-
-//Señala las series marcadas o desmarcadas como favoritas
-function highlightFavorite(ev) {
-  ev.currentTarget.classList.toggle("favorite");
-}
-
-//Añade listeners a todos los iconos de elimiar de favoritos
-function removeFavorites(icons) {
-  for (const icon of icons) {
-    icon.addEventListener("click", handleClickRemove);
+//Recuperar el listado de favoritos del localStorage al recargar la página
+function restoreSavedFavorites() {
+  if (localStorage.getItem("favorites") !== null) {
+    favorites = JSON.parse(localStorage.getItem("favorites"));
+    renderFavorites();
   }
 }
 
-//Pinta las portadas y títulos de las series marcadas como favoritas
-function renderFavorite(ev) {
-  showFavorites();
-  favList.innerHTML += `<li class="anime__favorites--list--el" id="${ev.currentTarget.id}"><div class="anime__favorites--list--container">${ev.currentTarget.innerHTML}</div> <i class="fas fa-times-circle remove_favorite anime__favorites--list--remove"></i></li>`;
-  const removeIcons = document.querySelectorAll(".remove_favorite");
-  removeFavorites(removeIcons);
-}
-
-//Añade al array de favoritos las series marcadas como favoritas
-function addFavorite(ev) {
-  const selectedAnimeId = ev.currentTarget.id;
-  const favoriteAnimeData = favorites.find((row) => row === selectedAnimeId);
-  if (favoriteAnimeData === undefined) {
-    favorites.push(ev.currentTarget.id);
-    renderFavorite(ev);
-  } else {
-    const findAnimeId = favorites.findIndex((row) => row === selectedAnimeId);
-    favorites.splice(findAnimeId, 1);
-    favList.childNodes[findAnimeId].outerHTML = "";
-  }
-}
-
-//Elimina el elemenro de favoritos del array y elimina la clase "favorite" de el li
-function removeFavoriteFromArray(ev) {
-  const findAnimeId = favorites.findIndex(
-    (row) => row === ev.currentTarget.parentNode.id
-  );
-  const favoriteRemoved = favorites.splice(findAnimeId, 1);
-  const resultListChilds = resultList.childNodes;
-  //Si me sobra tiempo, intentar hacer esto con find
-  for (const result of resultListChilds) {
-    if (result.id === favoriteRemoved[0]) {
-      result.classList.remove("favorite");
-    }
-  }
-}
-
-//Elimina visualmente un elemento de la lista de favoritos
-function removeFavoriteRender(ev) {
-  ev.currentTarget.parentNode.outerHTML = "";
-}
-
-//Recupera los datos de favoritos del local storage
-function renderFavs() {
-  showFavorites();
-  favorites = JSON.parse(localStorage.getItem("favorites"));
-  favList.innerHTML = localStorage.getItem("favorites_html");
-  const removeIcons = document.querySelectorAll(".remove_favorite");
-  removeFavorites(removeIcons);
-}
-
-//Si tenemos algo en el local stotage, llama a renderFavs para recuperar los datos de favoritos
-if (localStorage.getItem("favorites_html") !== null) {
-  renderFavs();
-}
-
-///////////////////////////////////////////////Funciones manejadoras de eventos
-
-//Elimina el título y la portada de la lista de favoritos y el elemento favorito del array favorites
-function handleClickRemove(ev) {
-  removeFavoriteFromArray(ev);
-  removeFavoriteRender(ev);
-  localStorage.setItem("favorites", JSON.stringify(favorites));
-  localStorage.setItem("favorites_html", favList.innerHTML);
-}
-
-//Busca los resultados en la API y los muestra
-function handleClickSearch(ev) {
-  ev.preventDefault();
-  fetchResults();
-  showResults();
-  resultsArrow.classList.remove("hidden");
-}
-
-//Señala y añade al array de favoritos los favoritos
-function handleClickResultList(ev) {
-  highlightFavorite(ev);
-  addFavorite(ev);
-  localStorage.setItem("favorites", JSON.stringify(favorites));
-  localStorage.setItem("favorites_html", favList.innerHTML);
-}
-
-//Borra el input y la lista de resultados
-function handleResetBtn(ev) {
-  ev.preventDefault();
-  input.value = "";
-  resultList.innerHTML = "";
-  resultsArrow.classList.add("hidden");
-}
-
-//Borra visualmente, del array y del local storage todos los favoritos
-function handleResetFavoritesBtn(ev) {
-  ev.preventDefault();
-  headerMenu.classList.toggle("rotate");
-  favoritesSection.classList.add("hidden");
-  favList.innerHTML = "";
-  favorites = [];
-  const resultListChilds = resultList.childNodes;
-  //Esto quizás lo pueda hacer con un filter en vez de con un for of
-  for (const result of resultListChilds) {
-    if (result.classList.contains("favorite")) {
-      result.classList.remove("favorite");
-    }
-  }
-  localStorage.clear("favorites");
-}
-
-function handleClickHeader() {
+//Alternar la visibilidad de la sección de favoritos
+function toggleShowFavorites() {
   favoritesSection.classList.toggle("hidden");
-  headerMenu.classList.toggle("rotate");
-  window.scrollTo(0, 0);
 }
 
-function handleScrollHeader() {
+//Alternar la rotación del icono del menú del header (mobile)
+function toggleMenuRotation() {
+  headerMenu.classList.toggle("rotate");
+}
+
+//Alternar el color del icono del menú del header al hacer scroll (mobile)
+function changeColorMenu() {
   if (window.scrollY > 130) {
     headerMenu.classList.add("black");
   } else if (headerMenu.getBoundingClientRect(0, 130)) {
@@ -227,15 +219,61 @@ function handleScrollHeader() {
   }
 }
 
-function handleClickArrow() {
+//Hacer scroll hasta el inicio al clicar en los iconos del menú del header y del final de resultados
+function scrollToTop() {
   window.scrollTo(0, 0);
 }
-///////////////////////////////////////////////Eventos
 
+/////////////Funciones manejadoras de eventos
+function handleClickSearch(ev) {
+  ev.preventDefault();
+  fetchData();
+  resultsArrow.classList.remove("hidden");
+}
+
+function handleClickListElement(ev) {
+  toggleFavoriteClass(ev);
+  addToFavorites(ev);
+}
+
+function handleClickRemoveIcon(ev) {
+  removeFromFavorites(ev);
+}
+
+function handleClickReset(ev) {
+  ev.preventDefault();
+  resetResults();
+  resultsArrow.classList.add("hidden");
+}
+
+function handleClickResetFavs(ev) {
+  ev.preventDefault();
+  removeAllFavorites();
+  toggleMenuRotation();
+  favoritesSection.classList.add("hidden");
+}
+
+function handleClickHeader() {
+  toggleShowFavorites();
+  toggleMenuRotation();
+  scrollToTop();
+}
+
+function handleScrollHeader() {
+  changeColorMenu();
+}
+
+function handleClickArrow() {
+  scrollToTop();
+}
+
+//Funciones a las que llamamos nosotras: recuperar los datos del localStorage
+restoreSavedFavorites();
+
+/////////////Eventos
 searchBtn.addEventListener("click", handleClickSearch);
-resetBtn.addEventListener("click", handleResetBtn);
-resetFavoritesBtn.addEventListener("click", handleResetFavoritesBtn);
-headerMenu.addEventListener("click", handleClickHeader);
+resetBtn.addEventListener("click", handleClickReset);
+resetFavoritesBtn.addEventListener("click", handleClickResetFavs);
 document.addEventListener("scroll", handleScrollHeader);
+headerMenu.addEventListener("click", handleClickHeader);
 resultsArrow.addEventListener("click", handleClickArrow);
-//"touchend" o "touchstart" para tap
