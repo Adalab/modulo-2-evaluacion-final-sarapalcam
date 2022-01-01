@@ -6,15 +6,17 @@
 .favorite {
   border-radius: 10px;
   background-image: linear-gradient(
-    135deg,
-    $scndColor,
-    rgb(211, 211, 211),
-    rgb(124, 135, 150),
-    rgb(211, 211, 211),
-    $scndColor
+    125deg,
+    rgb(243, 166, 177),
+    rgb(221, 113, 129),
+    $favoriteColor,
+    rgb(221, 113, 129),
+    rgb(243, 166, 177),
+
   );
   color: $ppalColor;
   font-weight: bold;
+  
 }
 
 .rotate {
@@ -22,10 +24,11 @@
 }
 
 .main {
-  background-image: linear-gradient(to bottom, rgb(219, 219, 219), $scndColor);
-  min-height: calc(100vh - 200px);
+  background-image: linear-gradient(to bottom, $ppalColor, rgb(62, 41, 153), $ppalColor);
+  min-height: calc(100vh - 220px);
   @include tablet {
-    min-height: calc(100vh - 160px);
+    padding-top: 30px;
+    min-height: calc(100vh - 220px);
   }
 }
 
@@ -48,8 +51,9 @@
     position: absolute;
     top: 0;
     backdrop-filter: blur(5px);
-    background-color: rgba(97, 97, 97, 0.705);
+    background-color: rgba($color: rgb(129, 121, 173), $alpha: .7);
     margin-bottom: 30px;
+    z-index: 998;
     @include tablet {
       color: $scndColor;
       display: block;
@@ -59,12 +63,13 @@
       width: 300px;
       margin-right: 20px;
       background-color: $ppalColor;
+      box-shadow: 0px 0px 10px 5px rgba($color: rgb(80, 57, 214), $alpha: .3)
     }
     &--list {
       &--el {
         display: flex;
         justify-content: center;
-        font-weight: bold;
+        
       }
       &--container {
         padding: 15px 0;
@@ -113,11 +118,11 @@
     border-radius: 10px;
     margin-bottom: 30px;
     color: $scndColor;
+    box-shadow: 0px 0px 10px 5px rgba($color: rgb(80, 57, 214), $alpha: .3);
     &--list {
       display: flex;
       flex-direction: column;
       align-items: center;
-
       @include tablet {
         flex-direction: row;
         flex-wrap: wrap;
@@ -139,6 +144,11 @@
       &--title {
         margin-top: 5px;
         max-width: 200px;
+      }
+      &--heart{
+        position: absolute;
+        width: 80px;
+        transform: translate(-114px, -30px);
       }
     }
     &--title {

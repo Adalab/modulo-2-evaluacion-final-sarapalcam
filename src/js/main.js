@@ -41,9 +41,16 @@ function renderResults(results) {
     newImg.title = `Imagen de portada de ${result.title}`;
     const newParagraph = document.createElement("p");
     const newParagraphContent = document.createTextNode(`${result.title}`);
+    const newImgFav = document.createElement("img");
+    newImgFav.src = "./assets/images/favorite.png";
+    newImgFav.alt = "Corazón de favorito";
+    newImgFav.title = "Corazón de favorito";
+    newImgFav.classList.add("anime__results--list--heart");
+    newImgFav.classList.add("hidden");
     newParagraph.appendChild(newParagraphContent);
     newLi.appendChild(newImg);
     newLi.appendChild(newParagraph);
+    newLi.appendChild(newImgFav);
     resultList.appendChild(newLi);
     newLi.addEventListener("click", handleClickListElement);
   }
@@ -67,6 +74,7 @@ function fetchData() {
 //Alternar la clase de favoritos al clicar en los elemetos de resultados
 function toggleFavoriteClass(ev) {
   ev.currentTarget.classList.toggle("favorite");
+  ev.currentTarget.childNodes[2].classList.toggle("hidden");
 }
 
 //Crear un nuevo objeto de favoritos al clicar sobre un elemeto de resultados
@@ -143,6 +151,8 @@ function deleteHighlitedResults(ev) {
   for (const item of renderedResultsLi) {
     if (selectedFavoriteId === item.id) {
       item.classList.remove("favorite");
+      item.childNodes[2].classList.add("hidden");
+
     }
   }
 }
@@ -169,6 +179,8 @@ function deleteAllHighlitedResults() {
   const renderedResultsLi = document.querySelectorAll(".js-li-results");
   for (const item of renderedResultsLi) {
     item.classList.remove("favorite");
+    item.childNodes[2].classList.add("hidden");
+
   }
 }
 
@@ -187,6 +199,8 @@ function showHighlitedResults() {
     for (const favorite of favorites) {
       if (favorite.id === item.id) {
         item.classList.add("favorite");
+        item.childNodes[2].classList.remove("hidden");
+
       }
     }
   }
@@ -208,15 +222,6 @@ function toggleShowFavorites() {
 //Alternar la rotación del icono del menú del header (mobile)
 function toggleMenuRotation() {
   headerMenu.classList.toggle("rotate");
-}
-
-//Alternar el color del icono del menú del header al hacer scroll (mobile)
-function changeColorMenu() {
-  if (window.scrollY > 130) {
-    headerMenu.classList.add("black");
-  } else if (headerMenu.getBoundingClientRect(0, 130)) {
-    headerMenu.classList.remove("black");
-  }
 }
 
 //Hacer scroll hasta el inicio al clicar en los iconos del menú del header y del final de resultados
@@ -259,10 +264,6 @@ function handleClickHeader() {
   scrollToTop();
 }
 
-function handleScrollHeader() {
-  changeColorMenu();
-}
-
 function handleClickArrow() {
   scrollToTop();
 }
@@ -274,6 +275,5 @@ restoreSavedFavorites();
 searchBtn.addEventListener("click", handleClickSearch);
 resetBtn.addEventListener("click", handleClickReset);
 resetFavoritesBtn.addEventListener("click", handleClickResetFavs);
-document.addEventListener("scroll", handleScrollHeader);
 headerMenu.addEventListener("click", handleClickHeader);
 resultsArrow.addEventListener("click", handleClickArrow);

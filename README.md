@@ -4,7 +4,4 @@ Cosas que faltan:
 
 - Que no aparezca el botón de borrar favoritos cuando la lista de favoritos esté vacía
 - Parcialización de HTML y JS
-- Cambiar estilos
 - Readme
-- Favicon
-- Logo
