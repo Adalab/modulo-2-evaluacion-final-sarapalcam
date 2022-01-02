@@ -32,11 +32,7 @@ function renderResults(results) {
     newLi.classList.add("js-li-results");
     newLi.classList.add("anime__results--list--el");
     const newImg = document.createElement("img");
-    if (result.image_url === null || result.image_url === undefined) {
-      newImg.src = "https://via.placeholder.com/225x317/ffffff/666666/?text=TV";
-    } else {
-      newImg.src = result.image_url;
-    }
+    setImage(result.image_url, newImg);
     newImg.style = "height: 317px; width: 225px; background-size: cover";
     newImg.alt = `Imagen de portada de ${result.title}`;
     newImg.title = `Imagen de portada de ${result.title}`;
@@ -57,6 +53,15 @@ function renderResults(results) {
   }
   showHighlitedResults();
 }
+
+function setImage(url, element) {
+  if (url === null || url === undefined) {
+    element.src = "https://via.placeholder.com/225x317/ffffff/666666/?text=TV";
+  } else {
+    element.src = url;
+  }
+}
+//Separar funciones de renderizado en pequeños bloques
 
 //Hacer petición al servidor con el input de la usuaria
 function fetchData() {
