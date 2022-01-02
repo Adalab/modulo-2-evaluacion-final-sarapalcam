@@ -10,6 +10,7 @@ const resultList = document.querySelector(".js-result-list");
 const headerMenu = document.querySelector(".js-header-menu");
 const favoritesSection = document.querySelector(".js-favorites-section");
 const resultsArrow = document.querySelector(".js-results-arrow");
+const body = document.querySelector(".js-body");
 
 /////////////Constantes globales
 let favorites = [];
@@ -152,7 +153,6 @@ function deleteHighlitedResults(ev) {
     if (selectedFavoriteId === item.id) {
       item.classList.remove("favorite");
       item.childNodes[2].classList.add("hidden");
-
     }
   }
 }
@@ -180,7 +180,6 @@ function deleteAllHighlitedResults() {
   for (const item of renderedResultsLi) {
     item.classList.remove("favorite");
     item.childNodes[2].classList.add("hidden");
-
   }
 }
 
@@ -200,7 +199,6 @@ function showHighlitedResults() {
       if (favorite.id === item.id) {
         item.classList.add("favorite");
         item.childNodes[2].classList.remove("hidden");
-
       }
     }
   }
@@ -212,6 +210,20 @@ function restoreSavedFavorites() {
     favorites = JSON.parse(localStorage.getItem("favorites"));
     renderFavorites();
   }
+}
+
+//Funciones que alternan el overflow del body y de la lista de favoritos para que en versión móvil no haya scroll más allá de favoritos
+function toggleOverflowFavorites() {
+  favoritesSection.classList.toggle("overflow__scroll");
+}
+
+function removeOverflow() {
+  body.classList.remove("overflow__hidden");
+  favoritesSection.classList.remove("overflow__scroll");
+}
+
+function toggleOverflowBody() {
+  body.classList.toggle("overflow__hidden");
 }
 
 //Alternar la visibilidad de la sección de favoritos
@@ -253,12 +265,15 @@ function handleClickReset(ev) {
 
 function handleClickResetFavs(ev) {
   ev.preventDefault();
+  removeOverflow();
   removeAllFavorites();
   toggleMenuRotation();
   favoritesSection.classList.add("hidden");
 }
 
 function handleClickHeader() {
+  toggleOverflowBody();
+  toggleOverflowFavorites();
   toggleShowFavorites();
   toggleMenuRotation();
   scrollToTop();

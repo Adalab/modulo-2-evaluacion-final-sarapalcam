@@ -12,7 +12,7 @@
     border-radius: 8px;
   }
   &:focus {
-    border: rgb(226, 226, 226) solid 4px;
+    box-shadow: 0px 0px 10px 5px rgba($color: rgb(80, 57, 214), $alpha: 0.3);
     border-radius: 8px;
   }
 }

@@ -4,3 +4,8 @@
   display: flex;
   flex-direction: column;
 }
+
+.overflow__hidden {
+  height: 100%;
+  overflow: hidden;
+}

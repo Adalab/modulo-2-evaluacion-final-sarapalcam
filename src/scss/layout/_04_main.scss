@@ -11,12 +11,10 @@
     rgb(221, 113, 129),
     $favoriteColor,
     rgb(221, 113, 129),
-    rgb(243, 166, 177),
-
+    rgb(243, 166, 177)
   );
   color: $ppalColor;
   font-weight: bold;
-  
 }
 
 .rotate {
@@ -24,12 +22,22 @@
 }
 
 .main {
-  background-image: linear-gradient(to bottom, $ppalColor, rgb(62, 41, 153), $ppalColor);
+  background-image: linear-gradient(
+    to bottom,
+    $ppalColor,
+    rgb(62, 41, 153),
+    $ppalColor
+  );
   min-height: calc(100vh - 220px);
   @include tablet {
     padding-top: 30px;
     min-height: calc(100vh - 220px);
   }
+}
+
+.overflow__scroll {
+  height: 100%;
+  overflow-y: scroll;
 }
 
 //Estilos de las listas de resultados y favoritos
@@ -46,15 +54,16 @@
   }
   &__favorites {
     width: 100%;
-    min-height: 88px;
+    min-height: 100vh;
     text-align: center;
     position: absolute;
     top: 0;
     backdrop-filter: blur(5px);
-    background-color: rgba($color: rgb(129, 121, 173), $alpha: .7);
+    background-color: rgba($color: rgb(129, 121, 173), $alpha: 0.7);
     margin-bottom: 30px;
     z-index: 998;
     @include tablet {
+      min-height: unset;
       color: $scndColor;
       display: block;
       position: initial;
@@ -63,13 +72,12 @@
       width: 300px;
       margin-right: 20px;
       background-color: $ppalColor;
-      box-shadow: 0px 0px 10px 5px rgba($color: rgb(80, 57, 214), $alpha: .3)
+      box-shadow: 0px 0px 10px 5px rgba($color: rgb(80, 57, 214), $alpha: 0.3);
     }
     &--list {
       &--el {
         display: flex;
         justify-content: center;
-        
       }
       &--container {
         padding: 15px 0;
@@ -118,7 +126,7 @@
     border-radius: 10px;
     margin-bottom: 30px;
     color: $scndColor;
-    box-shadow: 0px 0px 10px 5px rgba($color: rgb(80, 57, 214), $alpha: .3);
+    box-shadow: 0px 0px 10px 5px rgba($color: rgb(80, 57, 214), $alpha: 0.3);
     &--list {
       display: flex;
       flex-direction: column;
@@ -145,7 +153,7 @@
         margin-top: 5px;
         max-width: 200px;
       }
-      &--heart{
+      &--heart {
         position: absolute;
         width: 80px;
         transform: translate(-114px, -30px);
