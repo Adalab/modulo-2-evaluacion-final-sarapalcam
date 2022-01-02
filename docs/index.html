@@ -41,8 +41,7 @@
       <i class="fas fa-caret-square-down header__menu js-header-menu"></i>
     </header>
     <main class="main">
-      <form class="form" action="#">
-        <!-- RECORDAR RELLENAR EL ACTION -->
+      <form class="form" action="#" method="post">
         <label class="form__label" for="input"
           >Escribe aquí el nombre del anime que buscas:</label
         >
@@ -59,7 +58,7 @@
               type="submit"
               value="Buscar"
             />
-            <button class="js-reset-btn form__btn--reset">Reset</button>
+            <button class="js-reset-btn form__btn--reset">Borrar</button>
           </div>
         </div>
       </form>
@@ -67,7 +66,7 @@
         <section class="anime__favorites js-favorites-section hidden">
           <h2 class="anime__favorites--title">Series favoritas</h2>
           <ul class="js-favorites-list anime__favorites--list hidden"></ul>
-          <button class="js-reset-favorites-btn anime__favorites--btn">
+          <button class="js-reset-favorites-btn anime__favorites--btn--off">
             Borrar favoritos
           </button>
         </section>
