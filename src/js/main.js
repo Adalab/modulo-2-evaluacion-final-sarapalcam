@@ -1,5 +1,8 @@
 "use strict";
 
+//Reducir variables, declarar sentencias fuera de los for, meter ifs en bucles si se puede, ver como puedo poner comillas simples sin que me lo cambie prettier, comprobar que no tengo variables locales con el mismo nombre
+//Separar funciones de renderizado en pequeños bloques, utilizar catchVamos, como en cualquier otro lenguaje, debemos evitar tener estructura duplicadas a lo largo del programa y refactorizarlas por funciones o clases que centralicen este tipo de código.
+
 /////////////Elementos de HTML
 const input = document.querySelector(".js-input");
 const searchBtn = document.querySelector(".js-search-btn");
@@ -23,6 +26,16 @@ function getInputValue() {
   return input.value;
 }
 
+//Probar que la imagen sea nula para ver que funciona
+function setDefaultImage(url, imgElement) {
+  if (url === null) {
+    imgElement.src =
+      "https://via.placeholder.com/225x317/ffffff/666666/?text=TV";
+  } else {
+    imgElement.src = url;
+  }
+}
+
 //Renderizar los resultados del fetch con DOM
 function renderResults(results) {
   resultList.innerHTML = "";
@@ -32,7 +45,7 @@ function renderResults(results) {
     newLi.classList.add("js-li-results");
     newLi.classList.add("anime__results--list--el");
     const newImg = document.createElement("img");
-    setImage(result.image_url, newImg);
+    setDeafultImage(result.image_url, newImg);
     newImg.style = "height: 317px; width: 225px; background-size: cover";
     newImg.alt = `Imagen de portada de ${result.title}`;
     newImg.title = `Imagen de portada de ${result.title}`;
@@ -53,15 +66,6 @@ function renderResults(results) {
   }
   showHighlitedResults();
 }
-
-function setImage(url, element) {
-  if (url === null || url === undefined) {
-    element.src = "https://via.placeholder.com/225x317/ffffff/666666/?text=TV";
-  } else {
-    element.src = url;
-  }
-}
-//Separar funciones de renderizado en pequeños bloques
 
 //Hacer petición al servidor con el input de la usuaria
 function fetchData() {
