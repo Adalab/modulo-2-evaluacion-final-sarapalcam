@@ -106,15 +106,28 @@
       }
     }
     &--btn {
-      font-size: 20px;
-      margin-bottom: 20px;
-      width: 200px;
-      padding: 7px;
-      border-radius: 50px;
-      border: none;
-      background-color: $deleteColor;
-      color: $scndColor;
-      cursor: pointer;
+      &--on{
+        font-size: 20px;
+        margin-bottom: 20px;
+        width: 200px;
+        padding: 7px;
+        border-radius: 50px;
+        border: none;
+        cursor: pointer;
+        background-color: $deleteColor;
+        color: $scndColor;
+      }
+       &--off{
+        font-size: 20px;
+        margin-bottom: 20px;
+        width: 200px;
+        padding: 7px;
+        border-radius: 50px;
+        border: none;
+        cursor: pointer;
+        background-color: rgb(184, 184, 184);
+        color: rgb(138, 138, 138);
+       }
     }
   }
   &__results {
@@ -176,3 +189,4 @@
     }
   }
 }
+

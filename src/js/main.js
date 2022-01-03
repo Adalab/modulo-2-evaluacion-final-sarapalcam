@@ -140,6 +140,8 @@ function renderFavorites() {
 
 //Añadir un nuevo objeto al array de favoritos (si no está ya marcado como favorito) al clicar sobre un elemento de resultados
 function addToFavorites(ev) {
+  resetFavoritesBtn.classList.remove("anime__favorites--btn--off");
+  resetFavoritesBtn.classList.add("anime__favorites--btn--on");
   const favorite = createNewFavorite(ev);
   const selectedAnimeId = ev.currentTarget.id;
   const favoriteAnime = favorites.find((fav) => fav.id === selectedAnimeId);
@@ -166,6 +168,11 @@ function deleteHighlitedResults(ev) {
   }
 }
 
+function restoreOffBtn() {
+  resetFavoritesBtn.classList.add("anime__favorites--btn--off");
+  resetFavoritesBtn.classList.remove("anime__favorites--btn--on");
+}
+
 //Eliminar un elemento del array de favoritos al clicar en las "x" de favoritos
 function removeFromFavorites(ev) {
   const selectedFavoriteId = ev.currentTarget.parentNode.id;
@@ -173,6 +180,9 @@ function removeFromFavorites(ev) {
     (fav) => fav.id === selectedFavoriteId
   );
   favorites.splice(favoriteAnimeIndex, 1);
+  if (favorites.length === 0) {
+    restoreOffBtn();
+  }
   deleteHighlitedResults(ev);
   renderFavorites();
 }
@@ -277,6 +287,7 @@ function handleClickResetFavs(ev) {
   removeOverflow();
   removeAllFavorites();
   toggleMenuRotation();
+  restoreOffBtn();
   favoritesSection.classList.add("hidden");
 }
 
