@@ -25,82 +25,9 @@
     <title>Buscanime</title>
   </head>
   <body class="body js-body">
-    <header class="header">
-      <img
-        class="header__title"
-        src="./assets/images/title.png"
-        alt="Buscanime: título de la web"
-        title="Buscanime: título de la web"
-      />
-      <img
-        class="header__logo"
-        src="./assets/images/logo.png"
-        alt="Logo de Buscanime"
-        title="Logo de Buscanime"
-      />
-      <i class="fas fa-caret-square-down header__menu js-header-menu"></i>
-    </header>
-    <main class="main">
-      <form class="form" action="#" method="post">
-        <label class="form__label" for="input"
-          >Escribe aquí el nombre del anime que buscas:</label
-        >
-        <div class="form__container">
-          <input
-            class="js-input form__input"
-            id="input"
-            type="text"
-            placeholder="Ej. Naruto"
-          />
-          <div class="form__btn">
-            <input
-              class="js-search-btn form__btn--search"
-              type="submit"
-              value="Buscar"
-            />
-            <button class="js-reset-btn form__btn--reset">Borrar</button>
-          </div>
-        </div>
-      </form>
-      <div class="anime">
-        <section class="anime__favorites js-favorites-section hidden">
-          <h2 class="anime__favorites--title">Series favoritas</h2>
-          <ul class="js-favorites-list anime__favorites--list hidden"></ul>
-          <button class="js-reset-favorites-btn anime__favorites--btn--off">
-            Borrar favoritos
-          </button>
-        </section>
-        <section class="anime__results">
-          <h2 class="anime__results--title">Resultados</h2>
-          <ul class="js-result-list anime__results--list hidden"></ul>
-          <i
-            class="
-              fas
-              fa-arrow-alt-circle-up
-              anime__results--arrow
-              js-results-arrow
-              hidden
-            "
-          ></i>
-        </section>
-      </div>
-    </main>
-    <footer class="footer">
-      <small class="footer__small">&copy; Sara Palomo Campesino</small>
-      <div class="footer__contact">
-        <a href="https://github.com/sarapalcam" target="_blank"
-          ><i class="fab fa-github-alt footer__contact--github"></i
-        ></a>
-        <a
-          href="https://www.linkedin.com/in/sara-palomo-campesino/"
-          target="_blank"
-          ><i class="fab fa-linkedin footer__contact--linkedin"></i
-        ></a>
-        <a href="https://www.instagram.com/saradibujicos/?hl=es" target="_blank"
-          ><i class="fab fa-instagram footer__contact--instagram"></i
-        ></a>
-      </div>
-    </footer>
+    <include src="./partials/01_header.html"></include>
+    <include src="./partials/02_main.html"></include>
+    <include src="partials/06_footer.html"></include>
     <script type="text/javascript" src="./assets/js/main.js"></script>
   </body>
 </html>

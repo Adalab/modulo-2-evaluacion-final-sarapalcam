@@ -1,9 +1,9 @@
 "use strict";
 
 //Reducir variables, declarar sentencias fuera de los for, meter ifs en bucles si se puede, ver como puedo poner comillas simples sin que me lo cambie prettier, comprobar que no tengo variables locales con el mismo nombre
-//Separar funciones de renderizado en pequeños bloques, utilizar catchVamos, como en cualquier otro lenguaje, debemos evitar tener estructura duplicadas a lo largo del programa y refactorizarlas por funciones o clases que centralicen este tipo de código.
+//Evitar tener estructura duplicadas a lo largo del programa y refactorizarlas por funciones o clases que centralicen este tipo de código.
 
-/////////////Elementos de HTML
+/////////////1. Elementos de HTML
 const input = document.querySelector(".js-input");
 const searchBtn = document.querySelector(".js-search-btn");
 const resetBtn = document.querySelector(".js-reset-btn");
@@ -15,56 +15,17 @@ const favoritesSection = document.querySelector(".js-favorites-section");
 const resultsArrow = document.querySelector(".js-results-arrow");
 const body = document.querySelector(".js-body");
 
-/////////////Constantes globales
+/////////////2. Constantes globales
 let favorites = [];
 let results = [];
 
-/////////////Funciones
+/////////////3. Funciones
+
+/////////////3.1. Funciones para la petición al servidor
 
 //Tomar el valor del input
 function getInputValue() {
   return input.value;
-}
-
-//Probar que la imagen sea nula para ver que funciona
-function setDefaultImage(url, imgElement) {
-  if (url === null) {
-    imgElement.src =
-      "https://via.placeholder.com/225x317/ffffff/666666/?text=TV";
-  } else {
-    imgElement.src = url;
-  }
-}
-
-//Renderizar los resultados del fetch con DOM
-function renderResults(results) {
-  resultList.innerHTML = "";
-  for (const result of results) {
-    const newLi = document.createElement("li");
-    newLi.id = `${result.mal_id}`;
-    newLi.classList.add("js-li-results");
-    newLi.classList.add("anime__results--list--el");
-    const newImg = document.createElement("img");
-    setDeafultImage(result.image_url, newImg);
-    newImg.style = "height: 317px; width: 225px; background-size: cover";
-    newImg.alt = `Imagen de portada de ${result.title}`;
-    newImg.title = `Imagen de portada de ${result.title}`;
-    const newParagraph = document.createElement("p");
-    const newParagraphContent = document.createTextNode(`${result.title}`);
-    const newImgFav = document.createElement("img");
-    newImgFav.src = "./assets/images/favorite.png";
-    newImgFav.alt = "Corazón de favorito";
-    newImgFav.title = "Corazón de favorito";
-    newImgFav.classList.add("anime__results--list--heart");
-    newImgFav.classList.add("hidden");
-    newParagraph.appendChild(newParagraphContent);
-    newLi.appendChild(newImg);
-    newLi.appendChild(newParagraph);
-    newLi.appendChild(newImgFav);
-    resultList.appendChild(newLi);
-    newLi.addEventListener("click", handleClickListElement);
-  }
-  showHighlitedResults();
 }
 
 //Hacer petición al servidor con el input de la usuaria
@@ -81,20 +42,172 @@ function fetchData() {
     });
 }
 
+/////////////3.2. Funciones para renderizar los resultados
+
+//Funciones para renderizar los resultados del fetch con DOM
+function setDefaultImage(url, imgElement) {
+  if (url === null) {
+    imgElement.src =
+      "https://via.placeholder.com/225x317/ffffff/666666/?text=TV";
+  } else {
+    imgElement.src = url;
+  }
+}
+
+function createCoverImgResult(result) {
+  const newImgResult = document.createElement("img");
+  setDefaultImage(result.image_url, newImgResult);
+  newImgResult.style = "height: 317px; width: 225px; background-size: cover";
+  newImgResult.alt = `Imagen de portada de ${result.title}`;
+  newImgResult.title = `Imagen de portada de ${result.title}`;
+  return newImgResult;
+}
+
+function createParagraphResult(result) {
+  const newParagraphResult = document.createElement("p");
+  const newParagraphResultContent = document.createTextNode(`${result.title}`);
+  newParagraphResult.appendChild(newParagraphResultContent);
+  return newParagraphResult;
+}
+
+function createFavoritesImgResult() {
+  const newImgFavResult = document.createElement("img");
+  newImgFavResult.src = "./assets/images/favorite.png";
+  newImgFavResult.alt = "Corazón de favorito";
+  newImgFavResult.title = "Corazón de favorito";
+  newImgFavResult.classList.add("anime__results--list--heart");
+  newImgFavResult.classList.add("hidden");
+  return newImgFavResult;
+}
+
+function appendElementsToResult(result, liElement) {
+  const newLiCover = createCoverImgResult(result);
+  const newLiTitle = createParagraphResult(result);
+  const newLiFavoriteImg = createFavoritesImgResult();
+  liElement.appendChild(newLiCover);
+  liElement.appendChild(newLiTitle);
+  liElement.appendChild(newLiFavoriteImg);
+}
+
+function addListenerToResultLi(resultLi) {
+  resultLi.addEventListener("click", handleClickListElement);
+}
+
+function createLiResult(result) {
+  const newLiResult = document.createElement("li");
+  newLiResult.id = `${result.mal_id}`;
+  newLiResult.classList.add("js-li-results");
+  newLiResult.classList.add("anime__results--list--el");
+  appendElementsToResult(result, newLiResult);
+  addListenerToResultLi(newLiResult);
+  return newLiResult;
+}
+
+//Renderizar los resultados del fetch con DOM
+function renderResults(results) {
+  resultList.innerHTML = "";
+  for (const result of results) {
+    const newLiElement = createLiResult(result);
+    resultList.appendChild(newLiElement);
+  }
+  showHighlitedResults();
+}
+
 //Alternar la clase de favoritos al clicar en los elemetos de resultados
 function toggleFavoriteClass(ev) {
   ev.currentTarget.classList.toggle("favorite");
   ev.currentTarget.childNodes[2].classList.toggle("hidden");
 }
 
+/////////////3.2. Funciones para crear y renderizar favoritos
+
 //Crear un nuevo objeto de favoritos al clicar sobre un elemeto de resultados
-function createNewFavorite(ev) {
+function createNewFavoriteObject(ev) {
   let favorite = {
     id: ev.currentTarget.id,
     image_url: ev.currentTarget.childNodes[0].currentSrc,
     title: ev.currentTarget.childNodes[1].innerText,
   };
   return favorite;
+}
+
+//Añadir un nuevo objeto al array de favoritos (si no está ya marcado como favorito) al clicar sobre un elemento de resultados
+function updateFavoritesList(ev) {
+  const favorite = createNewFavoriteObject(ev);
+  const selectedAnimeId = ev.currentTarget.id;
+  const favoriteAnime = favorites.find((fav) => fav.id === selectedAnimeId);
+  if (favoriteAnime === undefined) {
+    favorites.push(favorite);
+  } else {
+    const favoriteAnimeIndex = favorites.findIndex(
+      (fav) => fav.id === selectedAnimeId
+    );
+    favorites.splice(favoriteAnimeIndex, 1);
+  }
+}
+
+//Funciones para renderizar el listado de favoritos con DOM
+function createCoverFavorite(favorite) {
+  const newImgFav = document.createElement("img");
+  newImgFav.src = favorite.image_url;
+  newImgFav.style = "height: 170px; width: 121px; background-size: cover";
+  newImgFav.alt = `Imagen de portada de ${favorite.title}`;
+  newImgFav.title = `Imagen de portada de ${favorite.title}`;
+  return newImgFav;
+}
+
+function createParagraphFavorite(favorite) {
+  const newParagraphFav = document.createElement("p");
+  const newParagraphFavContent = document.createTextNode(`${favorite.title}`);
+  newParagraphFav.appendChild(newParagraphFavContent);
+  return newParagraphFav;
+}
+
+function appendElementsToFavoriteDiv(favorite, divElement) {
+  const coverFavorite = createCoverFavorite(favorite);
+  const titleFavorite = createParagraphFavorite(favorite);
+  divElement.appendChild(coverFavorite);
+  divElement.appendChild(titleFavorite);
+  return divElement;
+}
+
+function createDivFavorite(favorite) {
+  const newDivFav = document.createElement("div");
+  newDivFav.classList.add("anime__favorites--list--container");
+  const divFav = appendElementsToFavoriteDiv(favorite, newDivFav);
+  return divFav;
+}
+
+function createRemoveIconFavorite() {
+  const newIconFav = document.createElement("i");
+  newIconFav.classList.add("fas");
+  newIconFav.classList.add("fa-times-circle");
+  newIconFav.classList.add("js-remove-favorite");
+  newIconFav.classList.add("anime__favorites--list--remove");
+  return newIconFav;
+}
+
+function appendElementsToFavoriteList(favorite, liElement) {
+  const divElement = createDivFavorite(favorite);
+  const removeIcon = createRemoveIconFavorite();
+  liElement.appendChild(divElement);
+  liElement.appendChild(removeIcon);
+}
+
+function createLiFavorite(favorite) {
+  const newLiFav = document.createElement("li");
+  newLiFav.id = `${favorite.id}`;
+  newLiFav.classList.add("anime__favorites--list--el");
+  appendElementsToFavoriteList(favorite, newLiFav);
+  return newLiFav;
+}
+
+function addListenerToRemoveIcons() {
+  const removeIcon = document.querySelectorAll(".js-remove-favorite");
+  for (const icon of removeIcon) {
+    icon.addEventListener("click", handleClickRemoveIcon);
+  }
+  updateStatusResetBtn();
 }
 
 //Guardar el array de favoritos en el localStorage
@@ -107,53 +220,17 @@ function renderFavorites() {
   favList.classList.remove("hidden");
   favList.innerHTML = "";
   for (const favorite of favorites) {
-    const newLi = document.createElement("li");
-    newLi.id = `${favorite.id}`;
-    newLi.classList.add("anime__favorites--list--el");
-    const newDiv = document.createElement("div");
-    newDiv.classList.add("anime__favorites--list--container");
-    const newImg = document.createElement("img");
-    newImg.src = favorite.image_url;
-    newImg.style = "height: 170px; width: 121px; background-size: cover";
-    newImg.alt = `Imagen de portada de ${favorite.title}`;
-    newImg.title = `Imagen de portada de ${favorite.title}`;
-    const newParagraph = document.createElement("p");
-    const newParagraphContent = document.createTextNode(`${favorite.title}`);
-    const newIcon = document.createElement("i");
-    newIcon.classList.add("fas");
-    newIcon.classList.add("fa-times-circle");
-    newIcon.classList.add("js-remove_favorite");
-    newIcon.classList.add("anime__favorites--list--remove");
-    newParagraph.appendChild(newParagraphContent);
-    newDiv.appendChild(newImg);
-    newDiv.appendChild(newParagraph);
-    newLi.appendChild(newDiv);
-    newLi.appendChild(newIcon);
-    favList.appendChild(newLi);
-    const removeIcon = document.querySelectorAll(".js-remove_favorite");
-    for (const icon of removeIcon) {
-      icon.addEventListener("click", handleClickRemoveIcon);
-    }
+    const favoriteLiElement = createLiFavorite(favorite);
+    favList.appendChild(favoriteLiElement);
   }
+  addListenerToRemoveIcons();
   saveFavoritesArray();
 }
 
-//Añadir un nuevo objeto al array de favoritos (si no está ya marcado como favorito) al clicar sobre un elemento de resultados
+//
 function addToFavorites(ev) {
-  resetFavoritesBtn.classList.remove("anime__favorites--btn--off");
-  resetFavoritesBtn.classList.add("anime__favorites--btn--on");
-  const favorite = createNewFavorite(ev);
-  const selectedAnimeId = ev.currentTarget.id;
-  const favoriteAnime = favorites.find((fav) => fav.id === selectedAnimeId);
-  if (favoriteAnime === undefined) {
-    favorites.push(favorite);
-  } else {
-    const favoriteAnimeIndex = favorites.findIndex(
-      (fav) => fav.id === selectedAnimeId
-    );
-    favorites.splice(favoriteAnimeIndex, 1);
-  }
-  renderFavorites(favorite);
+  updateFavoritesList(ev);
+  renderFavorites();
 }
 
 //Eliminar el estilo de los favoritos en la lista de resultados al clicar en las "x" de favoritos
@@ -168,11 +245,6 @@ function deleteHighlitedResults(ev) {
   }
 }
 
-function restoreOffBtn() {
-  resetFavoritesBtn.classList.add("anime__favorites--btn--off");
-  resetFavoritesBtn.classList.remove("anime__favorites--btn--on");
-}
-
 //Eliminar un elemento del array de favoritos al clicar en las "x" de favoritos
 function removeFromFavorites(ev) {
   const selectedFavoriteId = ev.currentTarget.parentNode.id;
@@ -180,9 +252,6 @@ function removeFromFavorites(ev) {
     (fav) => fav.id === selectedFavoriteId
   );
   favorites.splice(favoriteAnimeIndex, 1);
-  if (favorites.length === 0) {
-    restoreOffBtn();
-  }
   deleteHighlitedResults(ev);
   renderFavorites();
 }
@@ -231,6 +300,35 @@ function restoreSavedFavorites() {
   }
 }
 
+//Funciones para activar o desactivar el botón de "borrar favoritos"
+function turnResetBtnOn() {
+  resetFavoritesBtn.classList.remove("anime__favorites--btn--off");
+  resetFavoritesBtn.classList.add("anime__favorites--btn--on");
+}
+
+function turnResetBtnOff() {
+  resetFavoritesBtn.classList.add("anime__favorites--btn--off");
+  resetFavoritesBtn.classList.remove("anime__favorites--btn--on");
+}
+
+function enableResetFavoritesBtn() {
+  resetFavoritesBtn.disabled = false;
+  turnResetBtnOn();
+}
+
+function disableResetFavoritesBtn() {
+  resetFavoritesBtn.disabled = true;
+  turnResetBtnOff();
+}
+
+function updateStatusResetBtn() {
+  if (favList.innerHTML === "") {
+    disableResetFavoritesBtn();
+  } else {
+    enableResetFavoritesBtn();
+  }
+}
+
 //Funciones que alternan el overflow del body y de la lista de favoritos para que en versión móvil no haya scroll más allá de favoritos
 function toggleOverflowFavorites() {
   favoritesSection.classList.toggle("overflow__scroll");
@@ -269,6 +367,7 @@ function handleClickSearch(ev) {
 
 function handleClickListElement(ev) {
   toggleFavoriteClass(ev);
+  enableResetFavoritesBtn();
   addToFavorites(ev);
 }
 
@@ -287,7 +386,6 @@ function handleClickResetFavs(ev) {
   removeOverflow();
   removeAllFavorites();
   toggleMenuRotation();
-  restoreOffBtn();
   favoritesSection.classList.add("hidden");
 }
 
@@ -305,6 +403,7 @@ function handleClickArrow() {
 
 //Funciones a las que llamamos nosotras: recuperar los datos del localStorage
 restoreSavedFavorites();
+updateStatusResetBtn();
 
 /////////////Eventos
 searchBtn.addEventListener("click", handleClickSearch);
