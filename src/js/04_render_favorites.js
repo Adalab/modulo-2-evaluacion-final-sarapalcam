@@ -84,7 +84,9 @@ function createLiFavorite(favorite) {
 }
 
 function addListenerToRemoveIcons() {
-  const removeIcon = document.querySelectorAll(`.${classNames.removeFavoritesIconJs}`);
+  const removeIcon = document.querySelectorAll(
+    `.${classNames.removeFavoritesIconJs}`
+  );
   for (const icon of removeIcon) {
     icon.addEventListener('click', handleClickRemoveIcon);
   }

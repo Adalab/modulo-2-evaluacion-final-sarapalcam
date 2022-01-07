@@ -5,7 +5,9 @@
 //Eliminar el estilo de los favoritos en la lista de resultados al clicar en las "x" de favoritos
 function deleteHighlitedResults(ev) {
   const selectedFavoriteId = ev.currentTarget.parentNode.id;
-  const renderedResultsLi = document.querySelectorAll(`.${classNames.liResult}`);
+  const renderedResultsLi = document.querySelectorAll(
+    `.${classNames.liResult}`
+  );
   for (const item of renderedResultsLi) {
     if (selectedFavoriteId === item.id) {
       item.classList.remove(classNames.favorite);
@@ -20,6 +22,7 @@ function removeFromFavorites(ev) {
   const favoriteAnimeIndex = favorites.findIndex(
     (fav) => fav.id === selectedFavoriteId
   );
+  console.log(favorites[favoriteAnimeIndex].title);
   favorites.splice(favoriteAnimeIndex, 1);
   deleteHighlitedResults(ev);
   renderFavorites();
@@ -27,7 +30,9 @@ function removeFromFavorites(ev) {
 
 //Eliminar el estilo de todos los favoritos en la lista de resultados al clicar sobre el botón de "borrar favoritos"
 function deleteAllHighlitedResults() {
-  const renderedResultsLi = document.querySelectorAll(`.${classNames.liResult}`);
+  const renderedResultsLi = document.querySelectorAll(
+    `.${classNames.liResult}`
+  );
   for (const item of renderedResultsLi) {
     item.classList.remove(classNames.favorite);
     item.childNodes[2].classList.add(classNames.hidden);
@@ -44,7 +49,9 @@ function removeAllFavorites() {
 
 //Mostrar el estilo de todos los favoritos en la lista de resultados aunque cambiemos de búsqueda o recarguemos la página
 function showHighlitedResults() {
-  const renderedResultsLi = document.querySelectorAll(`.${classNames.liResult}`);
+  const renderedResultsLi = document.querySelectorAll(
+    `.${classNames.liResult}`
+  );
   for (const item of renderedResultsLi) {
     for (const favorite of favorites) {
       if (favorite.id === item.id) {
@@ -111,7 +118,7 @@ function toggleShowFavorites() {
   favoritesSection.classList.toggle(classNames.hidden);
 }
 
-function hideFavoritesSection(){
+function hideFavoritesSection() {
   favoritesSection.classList.add(classNames.hidden);
 }
 

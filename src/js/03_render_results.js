@@ -37,13 +37,32 @@ function createFavoritesImgResult() {
   return newImgFavResult;
 }
 
+function messageInfo(results) {
+  let contentInfo = '';
+  if (results.airing) {
+    contentInfo = document.createTextNode('Se está emitiendo');
+  } else {
+    contentInfo = document.createTextNode('No se está emitiendo');
+  }
+  return contentInfo;
+}
+
+function createNewParagraphInfo(results) {
+  const newParagraph = document.createElement('p');
+  const contentInfo = messageInfo(results);
+  newParagraph.appendChild(contentInfo);
+  return newParagraph;
+}
+
 function appendElementsToResult(result, liElement) {
   const newLiCover = createCoverImgResult(result);
   const newLiTitle = createParagraphResult(result);
   const newLiFavoriteImg = createFavoritesImgResult();
+  const newParagraphInfo = createNewParagraphInfo(result);
   liElement.appendChild(newLiCover);
   liElement.appendChild(newLiTitle);
   liElement.appendChild(newLiFavoriteImg);
+  liElement.appendChild(newParagraphInfo);
 }
 
 function addClickListenerToResultLi(resultLi) {
@@ -78,11 +97,10 @@ function toggleFavoriteClass(ev) {
 }
 
 //Funciones para mostrar u ocultar la flecha de resultados par hacer scroll-up
-function showResultsArrow(){
+function showResultsArrow() {
   resultsArrow.classList.remove(classNames.hidden);
-
 }
 
-function hideResultsArrow(){
+function hideResultsArrow() {
   resultsArrow.classList.add(classNames.hidden);
 }
